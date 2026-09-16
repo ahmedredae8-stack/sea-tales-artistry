@@ -1,0 +1,16 @@
+{
+  "source": "https://github.com/ahmedredae8-stack/void-trading-post",
+  "capabilities": [
+    {"capability":"application code and routes","source":"GitHub repository","outcome":"preserve","status":"implementing","next_action":"copy and verify"},
+    {"capability":"visual assets and audio","source":"GitHub repository","outcome":"preserve","status":"implementing","next_action":"copy and verify"},
+    {"capability":"database schema","source":"Supabase migrations","outcome":"defer","status":"accepted","next_action":"none; user requested no backend now"},
+    {"capability":"existing records","source":"not supplied","outcome":"defer","status":"accepted","next_action":"none; no real users and no backend now"},
+    {"capability":"authentication identities","source":"external auth configuration","outcome":"replace","status":"deferred","next_action":"use Lovable authentication when backend is requested"},
+    {"capability":"authorization","source":"database policies","outcome":"defer","status":"accepted","next_action":"implement with backend later"},
+    {"capability":"uploaded file bytes","source":"repository assets","outcome":"preserve","status":"implementing","next_action":"copy bundled assets"},
+    {"capability":"external providers","source":"none detected beyond deferred database","outcome":"none","status":"verified","next_action":"none"},
+    {"capability":"public endpoints callbacks webhooks schedules secrets","source":"repository inspection","outcome":"none required for requested frontend","status":"verified","next_action":"none"},
+    {"capability":"cutover","source":"Lovable preview","outcome":"defer","status":"pending","next_action":"publish only when user requests"},
+    {"capability":"verification","source":"local preview","outcome":"preserve and extend","status":"pending","next_action":"test desktop and mobile interactions"}
+  ]
+}
