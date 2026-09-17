@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { MessageCircle, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 
 import { IntroLoader } from "@/components/IntroLoader";
 import { BackgroundShop } from "@/components/BackgroundShop";
@@ -9,6 +9,8 @@ import { TradingFloor } from "@/components/TradingFloor";
 import { TopHud } from "@/components/TopHud";
 import { DailyReward } from "@/components/DailyReward";
 import { QuestBoard } from "@/components/QuestBoard";
+import { BottomDock, type DockAction } from "@/components/BottomDock";
+import { FishingFleet } from "@/components/FishingFleet";
 import { usePlayer } from "@/hooks/usePlayer";
 import { saveThemeToAccount } from "@/lib/player";
 import { isMuted, playAmbient, playSfx, setMuted, stopAllSounds } from "@/lib/sound";
@@ -50,14 +52,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
-
-const actions = [
-  { key: "house", src: "/img/house.png", label: "القرية" },
-  { key: "shop", src: "/img/shop.png", label: "المتجر" },
-  { key: "quest", src: "/img/quest.png", label: "المهام" },
-  { key: "skull", src: "/img/skull.png", label: "المعركة" },
-  { key: "friends", src: "/img/friends.png", label: "الأصدقاء" },
-];
 
 /** Every destination lives as a floating window over the living sea. */
 type Win = "chat" | "settings" | "fish" | "ship" | "trade-fish" | "trade-ship" | null;
@@ -121,6 +115,16 @@ function Index() {
     setWin(w);
   };
 
+  const handleDockAction = (action: DockAction) => {
+    if (action === "chat") open("chat");
+    else if (action === "store") setShopOpen(true);
+    else if (action === "quests") setQuestsOpen(true);
+    else if (action === "tribe") void navigate({ to: "/tribes" });
+    else if (action === "battle") open("ship");
+    else if (action === "bag") open("fish");
+    else open("settings");
+  };
+
   return (
     <main className="relative h-[100svh] min-h-[100svh] w-full overflow-hidden bg-[oklch(0.15_0.04_250)]">
       {/* Living scene: a looping video shot of the bay, cropped to always cover */}
@@ -150,6 +154,7 @@ function Index() {
             <span className="hotspot-ring" />
           </button>
         ))}
+        <FishingFleet />
       </div>
 
       {/* Top HUD */}
@@ -159,9 +164,6 @@ function Index() {
 
       {/* Controls */}
       <div className="absolute left-3 top-[max(4.5rem,calc(env(safe-area-inset-top)+4.2rem))] z-10 flex flex-col items-center gap-2">
-        <button type="button" aria-label="الدردشة" className="ctl-btn" onClick={() => open("chat")}>
-          <MessageCircle className="h-5 w-5" />
-        </button>
         <button
           type="button"
           onClick={toggleSound}
@@ -176,31 +178,7 @@ function Index() {
         </span>
       </div>
 
-      {/* Bottom toolbar */}
-      <nav className="absolute inset-x-0 bottom-0 z-10 dock px-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
-        <ul className="mx-auto flex max-w-3xl items-end justify-between gap-1 sm:gap-2">
-          {actions.map((a, i) => (
-            <li key={a.key} className="flex-1">
-              <button
-                type="button"
-                aria-label={a.label}
-                className="dock-btn"
-                style={{ animationDelay: `${i * 0.25}s` }}
-                onPointerEnter={() => playSfx("hover", 0.35)}
-                onClick={() => {
-                  playSfx("click", 0.75);
-                  if (a.key === "shop") setShopOpen(true);
-                  else if (a.key === "quest") setQuestsOpen(true);
-                  else if (a.key === "house") setWin("settings");
-                  else if (a.key === "friends") void navigate({ to: "/friends" });
-                }}
-              >
-                <img src={a.src} alt="" className="h-full w-full object-contain" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      <BottomDock onAction={handleDockAction} />
 
       {shopOpen && <BackgroundShop activeId={themeId} onSelect={selectTheme} onClose={() => setShopOpen(false)} />}
 

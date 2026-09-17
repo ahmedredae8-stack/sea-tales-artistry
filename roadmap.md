@@ -10,3 +10,4 @@
 - [ ] Generate and install three matching transparent fishing-ship states
 - [ ] Add three interactive ships to the main sea scene
 - [ ] Add per-ship sail/return, crew, and sell actions
+- [ ] Add a matching partially submerged net state with only the rope and net edge visible
