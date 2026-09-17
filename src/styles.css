@@ -370,6 +370,111 @@
   transform: translateY(-1px) scale(0.96);
 }
 
+/* ── Golden reference dock ───────────────────────────────── */
+.game-dock {
+  position: absolute;
+  z-index: 24;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 0.6rem 0.55rem max(0.55rem, env(safe-area-inset-bottom));
+  background: linear-gradient(to top, oklch(0.14 0.035 255 / 0.86), oklch(0.18 0.04 250 / 0.52) 62%, transparent);
+  pointer-events: none;
+}
+
+.game-dock ul {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: end;
+  gap: clamp(0.12rem, 1vw, 0.55rem);
+  width: min(100%, 49rem);
+  margin-inline: auto;
+}
+
+.game-dock li { min-width: 0; }
+
+.game-dock-button {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: auto;
+  filter: drop-shadow(0 5px 5px oklch(0.06 0.03 250 / 0.72));
+  transition: transform 160ms ease, filter 160ms ease;
+}
+
+.game-dock-button:hover,
+.game-dock-button:focus-visible {
+  background: transparent;
+  transform: translateY(-5px) scale(1.04);
+  filter: drop-shadow(0 7px 8px oklch(0.06 0.03 250 / 0.8)) drop-shadow(0 0 7px color-mix(in oklab, var(--gold) 55%, transparent));
+}
+
+.game-dock-button img { width: 100%; height: 100%; object-fit: contain; }
+
+/* ── Independent fishing fleet ───────────────────────────── */
+.fleet-layer { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
+.fleet-ship {
+  position: absolute;
+  left: var(--ship-x);
+  top: var(--ship-y);
+  width: clamp(8.5rem, 18vw, 16rem);
+  aspect-ratio: 3 / 2;
+  translate: -50% -50%;
+  pointer-events: auto;
+  animation: ship-idle 3.6s ease-in-out var(--ship-delay) infinite;
+}
+.ship-hitbox { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; overflow: visible; background: transparent; }
+.ship-hitbox:hover { background: transparent; }
+.ship-hitbox > img { position: relative; z-index: 2; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 7px 5px oklch(0.08 0.04 235 / 0.7)); user-select: none; }
+.ship-water-shadow { position: absolute; z-index: 1; left: 14%; right: 8%; bottom: 19%; height: 12%; border-radius: 50%; background: oklch(0.16 0.07 225 / 0.52); filter: blur(5px); }
+.fishing-ripple { position: absolute; z-index: 1; left: 0; bottom: 13%; width: 35%; height: 16%; border: 2px solid oklch(0.9 0.08 210 / 0.62); border-radius: 50%; animation: net-ripple 1.8s ease-out infinite; }
+.fleet-ship-sailingOut { animation: sail-out 2.15s ease-in-out forwards; }
+.fleet-ship-casting,
+.fleet-ship-fishing { left: calc(var(--ship-x) + 9%); top: calc(var(--ship-y) - 14%); transform: rotate(-12deg); }
+.fleet-ship-casting { animation: cast-settle 0.95s ease-out; }
+.fleet-ship-fishing { animation: ship-idle 3.2s ease-in-out infinite; }
+.fleet-ship-hauling { left: calc(var(--ship-x) + 9%); top: calc(var(--ship-y) - 14%); transform: rotate(-12deg); animation: haul-net 0.95s ease-in-out; }
+.fleet-ship-sailingHome { animation: sail-home 2.2s ease-in-out forwards; }
+
+.ship-actions { position: absolute; z-index: 10; left: 50%; bottom: 85%; display: flex; gap: 0.3rem; translate: -50% 0; padding: 0.25rem; border: 1px solid color-mix(in oklab, var(--gold) 65%, transparent); border-radius: 0.45rem; background: oklch(0.13 0.04 252 / 0.9); box-shadow: 0 8px 18px oklch(0.05 0.02 250 / 0.7); backdrop-filter: blur(7px); }
+.ship-actions button { width: clamp(2.5rem, 4.8vw, 3.5rem); height: clamp(2.5rem, 4.8vw, 3.5rem); padding: 0.25rem; border: 1px solid color-mix(in oklab, var(--gold) 60%, transparent); background: oklch(0.22 0.045 250); }
+.ship-actions img { width: 100%; height: 100%; object-fit: contain; }
+
+.fleet-modal { position: fixed; z-index: 80; inset: 0; display: grid; place-items: center; padding: 1rem; background: oklch(0.05 0.02 250 / 0.72); pointer-events: auto; backdrop-filter: blur(5px); }
+.crew-panel, .sell-panel { width: min(100%, 32rem); max-height: min(80svh, 38rem); overflow: auto; border: 2px solid var(--gold-deep); border-radius: 0.5rem; background: linear-gradient(145deg, oklch(0.27 0.055 60), oklch(0.14 0.035 250)); color: oklch(0.97 0.025 90); box-shadow: 0 18px 48px oklch(0.03 0.02 250 / 0.85), inset 0 0 0 2px oklch(0.85 0.12 80 / 0.2); }
+.crew-panel header { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 1px solid color-mix(in oklab, var(--gold) 50%, transparent); background: oklch(0.16 0.04 250 / 0.96); }
+.crew-panel h2, .sell-panel h2 { font-size: 1.15rem; font-weight: 900; color: var(--gold); }
+.crew-panel ul { display: grid; gap: 0.45rem; padding: 0.75rem; }
+.crew-panel li { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr) auto; align-items: center; gap: 0.65rem; padding: 0.55rem; border: 1px solid oklch(0.78 0.12 75 / 0.35); background: oklch(0.16 0.035 250 / 0.72); }
+.crew-portrait { width: 3.5rem; height: 3.5rem; border: 1px solid var(--gold); border-radius: 0.35rem; }
+.crew-panel li > span { display: grid; min-width: 0; }
+.crew-panel strong { color: var(--gold); }
+.crew-panel small { display: block; font-size: 0.68rem; color: oklch(0.82 0.025 230); }
+.crew-panel li > button { display: grid; height: auto; min-width: 5.2rem; gap: 0; background: linear-gradient(180deg, var(--gold), var(--gold-deep)); color: oklch(0.17 0.04 60); font-weight: 900; }
+.crew-panel li > button small { color: inherit; }
+.sell-panel { display: grid; justify-items: center; gap: 0.65rem; padding: 1.1rem; text-align: center; }
+.sell-panel > img { width: min(90%, 20rem); aspect-ratio: 3 / 2; object-fit: contain; }
+.sell-panel p { max-width: 25rem; font-size: 0.85rem; color: oklch(0.87 0.025 230); }
+.sell-panel > div { display: flex; gap: 0.6rem; }
+
+@keyframes ship-idle { 0%, 100% { translate: -50% -50%; } 50% { translate: -50% calc(-50% - 4px); } }
+@keyframes sail-out { 0% { translate: -50% -50%; transform: rotate(0); } 65% { translate: calc(-50% + 8vw) calc(-50% - 13vh); transform: rotate(-7deg); } 100% { translate: calc(-50% + 9vw) calc(-50% - 14vh); transform: rotate(-12deg); } }
+@keyframes cast-settle { from { opacity: 0.7; scale: 0.96; } to { opacity: 1; scale: 1; } }
+@keyframes haul-net { 0%, 100% { translate: -50% -50%; } 45% { translate: -50% calc(-50% - 7px); } }
+@keyframes sail-home { 0% { left: calc(var(--ship-x) + 9%); top: calc(var(--ship-y) - 14%); translate: -50% -50%; transform: rotate(168deg); } 78% { left: var(--ship-x); top: var(--ship-y); translate: -50% -50%; transform: rotate(168deg); } 100% { left: var(--ship-x); top: var(--ship-y); translate: -50% -50%; transform: rotate(0); } }
+@keyframes net-ripple { from { scale: 0.65; opacity: 0.8; } to { scale: 1.2; opacity: 0; } }
+
+@media (max-aspect-ratio: 3/4) {
+  .fleet-ship { width: clamp(7.2rem, 29vw, 11rem); }
+  .fleet-ship:nth-child(1) { --ship-x: 22% !important; --ship-y: 65% !important; }
+  .fleet-ship:nth-child(2) { --ship-x: 50% !important; --ship-y: 55% !important; }
+  .fleet-ship:nth-child(3) { --ship-x: 78% !important; --ship-y: 65% !important; }
+  .game-dock { padding-inline: 0.2rem; }
+  .ship-actions { gap: 0.15rem; }
+}
+
 @keyframes bob {
   0%,
   100% {
@@ -384,7 +489,11 @@
   .dock-btn {
     animation: none;
   }
+  .fleet-ship, .fleet-ship-sailingOut, .fleet-ship-casting, .fleet-ship-fishing, .fleet-ship-hauling, .fleet-ship-sailingHome, .fishing-ripple { animation: none; transition: none; }
 }
+
+.reduce-game-motion .fleet-ship,
+.reduce-game-motion .fishing-ripple { animation: none !important; transition: none !important; }
 
 
 /* ── Intro / loading screen ──────────────────────────────── */

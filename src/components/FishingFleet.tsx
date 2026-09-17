@@ -4,13 +4,14 @@ import { X } from "lucide-react";
 import shipIdle from "@/assets/ships/fishing-ship-idle.png";
 import shipCast from "@/assets/ships/fishing-ship-cast.png";
 import shipHaul from "@/assets/ships/fishing-ship-haul.png";
+import shipSubmerged from "@/assets/ships/fishing-ship-submerged.png";
 import { GameSprite } from "@/components/GameSprite";
 import { Button } from "@/components/ui/button";
 import { CREWS } from "@/lib/items";
 import { fmt } from "@/lib/ships";
 import { playSfx } from "@/lib/sound";
 
-type ShipState = "docked" | "sailingOut" | "fishing" | "hauling" | "sailingHome" | "sold";
+type ShipState = "docked" | "sailingOut" | "casting" | "fishing" | "hauling" | "sailingHome" | "sold";
 type FleetShip = { id: number; state: ShipState };
 type ShipStyle = CSSProperties & { "--ship-x": string; "--ship-y": string; "--ship-delay": string };
 
@@ -40,13 +41,23 @@ export function FishingFleet() {
 
   const sail = (ship: FleetShip) => {
     setSelected(null);
-    playSfx("waves", 0.42);
+    playSfx("click", 0.55);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("reduce-game-motion");
     if (ship.state === "docked") {
+      if (reducedMotion) {
+        update(ship.id, "fishing");
+        return;
+      }
       update(ship.id, "sailingOut");
-      later(() => update(ship.id, "fishing"), 2200);
+      later(() => update(ship.id, "casting"), 2100);
+      later(() => update(ship.id, "fishing"), 3050);
       return;
     }
     if (ship.state === "fishing") {
+      if (reducedMotion) {
+        update(ship.id, "docked");
+        return;
+      }
       update(ship.id, "hauling");
       later(() => update(ship.id, "sailingHome"), 950);
       later(() => update(ship.id, "docked"), 3150);
@@ -59,8 +70,8 @@ export function FishingFleet() {
         if (ship.state === "sold") return null;
         const pos = positions[index];
         if (!pos) return null;
-        const busy = ship.state === "sailingOut" || ship.state === "hauling" || ship.state === "sailingHome";
-        const image = ship.state === "fishing" ? shipCast : ship.state === "hauling" ? shipHaul : shipIdle;
+        const busy = ship.state === "sailingOut" || ship.state === "casting" || ship.state === "hauling" || ship.state === "sailingHome";
+        const image = ship.state === "casting" ? shipCast : ship.state === "fishing" ? shipSubmerged : ship.state === "hauling" ? shipHaul : shipIdle;
         const style: ShipStyle = { "--ship-x": pos.x, "--ship-y": pos.y, "--ship-delay": pos.delay };
         return (
           <div key={ship.id} className={`fleet-ship fleet-ship-${ship.state}`} style={style}>
